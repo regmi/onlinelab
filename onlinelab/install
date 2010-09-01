@@ -1,0 +1,12 @@
+#! /bin/sh
+
+rm -rf bin root home
+mkdir bin root home
+cd base
+cd codenode-unr
+bin/link-online-lab-ui ../femhub-online-lab
+
+cd ../..
+cp base/codenode-unr/scripts/* bin/
+
+bin/init

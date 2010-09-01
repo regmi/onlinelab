@@ -1,0 +1,24 @@
+#! /bin/sh
+
+if [ "$SAGE_LOCAL" = "" ]; then
+   echo "SAGE_LOCAL undefined ... exiting";
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+if [ "$SAGE_ROOT" = "" ]; then
+   echo "SAGE_ROOT undefined ... exiting";
+   echo "Maybe run 'sage -sh'?"
+   exit 1
+fi
+
+PACKAGE_NAME=onlinelab-1.0
+cp -pr onlinelab $SAGE_ROOT/local/lib/python/site-packages/
+cd $SAGE_ROOT/local/lib/python/site-packages/onlinelab
+
+./install
+
+if [ $? -ne 0 ]; then
+   echo "Error installing $PACKAGE_NAME."
+   exit 1
+fi
