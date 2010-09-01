@@ -1,0 +1,9 @@
+include codenode/twisted/plugins/codenode_plugin.py
+include codenode/data/codenode.db
+
+graft codenode/frontend/static
+recursive-include codenode/frontend/static/js *
+recursive-include codenode/frontend/static/css *
+recursive-include codenode/frontend/static/img *
+
+recursive-include codenode/frontend/templates *

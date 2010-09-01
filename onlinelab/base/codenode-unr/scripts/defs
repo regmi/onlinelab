@@ -1,0 +1,8 @@
+#!/bin/bash
+
+BASE=$(readlink -f ./base)
+ROOT=$(readlink -f ./root)
+HOME=$(readlink -f ./home)
+
+PYTHONPATH=$BASE/codenode-unr
+
