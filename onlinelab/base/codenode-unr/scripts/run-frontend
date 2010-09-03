@@ -4,7 +4,7 @@ if [ -e "defs" ]; then
     source defs
 else
     #source bin/defs
-    $SAGE_LOCAL/lib/python/site-packages/onlinelab/bin/defs
+    source $SAGE_LOCAL/lib/python/site-packages/onlinelab/bin/defs
 fi
 
 #cd $ROOT
