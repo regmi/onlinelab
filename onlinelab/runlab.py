@@ -12,10 +12,8 @@ def run_lab_new():
     #process_backend = Popen([path_backend,], stdout=PIPE)
     #process_frontend = Popen([path_frontend,], stdout=PIPE)
 
-    print "FEMhub Online Lab is running now. Point your browser to
-    http://localhost:9000/ to login."
-    print "Press Ctrl+c to terminate the processes associated with the FEMhub Online Lab
-    press Ctrl+c."
+    print "FEMhub Online Lab is running now. Point your browser to http://localhost:9000/ to login."
+    print "Press Ctrl+c to terminate the processes associated with the FEMhub Online Lab press Ctrl+c."
 
     #process_frontend.wait()
     process_frontend.communicate()[0]
