@@ -12,7 +12,7 @@ if [ "$SAGE_ROOT" = "" ]; then
    exit 1
 fi
 
-PACKAGE_NAME=onlinelab-1.0
+PACKAGE_NAME=onlinelab
 cp -pr onlinelab $SAGE_ROOT/local/lib/python/site-packages/
 cd $SAGE_ROOT/local/lib/python/site-packages/onlinelab
 
