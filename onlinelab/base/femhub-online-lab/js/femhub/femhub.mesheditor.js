@@ -5,7 +5,7 @@ FEMhub.MeshEditor = Ext.extend(Ext.Window, {
         Ext.apply(config, {
             title: "MeshEditor",
             layout: 'fit',
-            width: 865,
+            width: 856,
             height: 668,
             iconCls: 'femhub-mesheditor-icon',
             bodyCssClass: 'femhub-mesheditor-body',
