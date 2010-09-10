@@ -1,144 +1,174 @@
 
 FEMhub.Notebook = Ext.extend(Ext.Window, {
-    iconCls: 'femhub-notebook-icon',
-    maximizable: true,
-    layout: 'fit',
-
-    cells: null,
-    baseTitle: 'FEMhub Notebook',
-
     imports: [],
 
     constructor: function(config) {
-        config.title = config.name;
-        FEMhub.Notebook.superclass.constructor.apply(this, arguments);
+        config = config || {};
+
+        if (!Ext.isDefined(config.conf.name)) {
+            config.conf.name = 'untitled';
+        }
+
+        this.cells = new FEMhub.CellPanel({ conf: config.conf });
+
+        Ext.applyIf(config, {
+            title: config.conf.name,
+            iconCls: 'femhub-notebook-icon',
+            layout: 'fit',
+            tbar: this.initToolbar(),
+            items: this.cells,
+        });
+
+        FEMhub.Notebook.superclass.constructor.call(this, config);
     },
 
     getCellsManager: function() {
         return this.cells.getCellsManager();
     },
 
-    setTitle: function(text) {
-        this.name = text;
-
-        if (text) {
-            var title = this.baseTitle + ' - ' + text;
-        } else {
-            var title = this.baseTitle;
-        }
-
-        FEMhub.Notebook.superclass.setTitle.call(this, title);
+    getGUID: function() {
+        return this.getCellsManager().getGUID();
     },
 
-    initComponent: function() {
-        this.tbar = new Ext.Toolbar({
+    initToolbar: function() {
+        return new Ext.Toolbar({
             enableOverflow: true,
-            items: [
-                {
-                    cls: 'x-btn-text-icon',
-                    text: 'Share',
-                    iconCls: 'femhub-share-notebook-icon',
-                    handler: function() {
-                        FEMhub.raiseNotImplementedError();
-                    },
-                    scope: this,
-                }, '-', {
-                    cls: 'x-btn-text-icon',
-                    text: 'Evaluate All',
-                    iconCls: 'femhub-eval-all-notebook-icon',
-                    handler: function() {
-                        this.evaluateCells();
-                    },
-                    scope: this,
-                }, {
-                    xtype: 'tbsplit',
-                    cls: 'x-btn-text-icon',
-                    text: 'Imports',
-                    iconCls: 'femhub-plugin-icon',
-                    menu: [{
-                        text: 'Select',
-                        iconCls: 'femhub-plugin-edit-icon',
-                        handler: function() {
-                            this.selectImports();
-                        },
-                        scope: this,
-                    }, {
-                        text: 'Reload',
-                        iconCls: 'femhub-refresh-icon',
-                        handler: function() {
-                            this.evaluateImports();
-                        },
-                        scope: this,
-                    }],
+            items: [{
+                cls: 'x-btn-text-icon',
+                text: 'Share',
+                iconCls: 'femhub-share-notebook-icon',
+                tooltip: 'Share this notebook with other users.',
+                tabIndex: -1,
+                handler: function() {
+                    FEMhub.raiseNotImplementedError();
+                },
+                scope: this,
+            }, '-', {
+                cls: 'x-btn-text-icon',
+                text: 'Evaluate All',
+                iconCls: 'femhub-eval-all-notebook-icon',
+                tooltip: 'Evaluate all cells in this notebook.',
+                tabIndex: -1,
+                handler: function() {
+                    this.evaluateCells();
+                },
+                scope: this,
+            }, {
+                xtype: 'tbsplit',
+                cls: 'x-btn-text-icon',
+                text: 'Imports',
+                iconCls: 'femhub-plugin-icon',
+                tooltip: 'Import external cells to this notebook.',
+                tabIndex: -1,
+                menu: [{
+                    text: 'Select',
+                    iconCls: 'femhub-plugin-edit-icon',
                     handler: function() {
                         this.selectImports();
                     },
                     scope: this,
-                }, '-', {
-                    cls: 'x-btn-text-icon',
-                    text: 'Refresh',
+                }, {
+                    text: 'Reload',
                     iconCls: 'femhub-refresh-icon',
                     handler: function() {
-                        this.getCellsManager().justifyCells();
+                        this.evaluateImports();
                     },
                     scope: this,
-                }, {
-                    cls: 'x-btn-text-icon',
-                    text: 'Rename',
-                    iconCls: 'femhub-rename-icon',
-                    handler: function() {
-                        this.renameNotebook();
-                    },
-                    scope: this,
-                }, {
-                    cls: 'x-btn-text-icon',
-                    text: 'Save',
-                    iconCls: 'femhub-save-notebook-icon',
-                    handler: function() {
-                        this.getCellsManager().saveToBackend();
-                    },
-                    scope: this,
-                }, {
-                    cls: 'x-btn-text',
-                    text: 'Save & Close',
-                    handler: function() {
-                        this.getCellsManager().saveToBackend({
-                            postsave: this.close,
-                            scope: this,
-                        });
-                    },
-                    scope: this,
-                }, '-', {
-                    cls: 'x-btn-text-icon',
-                    text: 'Kill',
-                    iconCls: 'femhub-remove-icon',
-                    handler: function() {
-                        this.getCellsManager().killBackend();
-                    },
-                    scope: this,
+                }],
+                handler: function() {
+                    this.selectImports();
                 },
-            ],
+                scope: this,
+            }, '-', {
+                cls: 'x-btn-icon',
+                iconCls: 'femhub-increase-font-size-icon',
+                tooltip: "Increase cells' font size.",
+                tabIndex: -1,
+                handler: function() {
+                    this.getCellsManager().increaseFontSize();
+                },
+                scope: this,
+            }, {
+                cls: 'x-btn-icon',
+                iconCls: 'femhub-decrease-font-size-icon',
+                tooltip: "Decrease cells' font size.",
+                tabIndex: -1,
+                handler: function() {
+                    this.getCellsManager().decreaseFontSize();
+                },
+                scope: this,
+            }, '-', {
+                cls: 'x-btn-text-icon',
+                text: 'Refresh',
+                iconCls: 'femhub-refresh-icon',
+                tooltip: 'Refresh the user interface.',
+                tabIndex: -1,
+                handler: function() {
+                    this.getCellsManager().justifyCells();
+                },
+                scope: this,
+            }, {
+                cls: 'x-btn-text-icon',
+                text: 'Rename',
+                iconCls: 'femhub-rename-icon',
+                tooltip: 'Choose new title for this notebook.',
+                tabIndex: -1,
+                handler: function() {
+                    this.renameNotebook();
+                },
+                scope: this,
+            }, {
+                cls: 'x-btn-text-icon',
+                text: 'Save',
+                iconCls: 'femhub-save-notebook-icon',
+                tooltip: 'Save changes to this notebook.',
+                tabIndex: -1,
+                handler: function() {
+                    this.getCellsManager().saveToBackend();
+                },
+                scope: this,
+            }, {
+                cls: 'x-btn-text',
+                text: 'Save & Close',
+                tooltip: 'Save changes and close this window.',
+                tabIndex: -1,
+                handler: function() {
+                    this.getCellsManager().saveToBackend({
+                        postsave: this.close,
+                        scope: this,
+                    });
+                },
+                scope: this,
+            }, '-', {
+                cls: 'x-btn-text-icon',
+                text: 'Interrupt',
+                iconCls: 'femhub-remove-icon',
+                tooltip: 'Interrupt currently evaluating cell.',
+                tabIndex: -1,
+                handler: function() {
+                    this.getCellsManager().interruptEngine();
+                },
+                scope: this,
+            }],
         });
-
-        FEMhub.Notebook.superclass.initComponent.call(this);
     },
 
-    onRender: function() {
-        FEMhub.Notebook.superclass.onRender.apply(this, arguments);
+    setTitle: function(title, iconCls) {
+        this.name = title;
 
-        this.cells = new FEMhub.Cells({
-            nbid: this.nbid,
-            name: this.name,
-        });
+        if (title) {
+            title = 'Notebook - ' + title;
+        } else {
+            title = 'Notebook';
+        }
 
-        this.add(this.cells);
+        FEMhub.Notebook.superclass.setTitle.call(this, title, iconCls);
     },
 
     close: function() {
         var manager = this.getCellsManager();
 
         if (manager.isSavedToBackend()) {
-            manager.killEngine();
             FEMhub.Notebook.superclass.close.call(this);
         } else {
             Ext.MessageBox.show({
@@ -150,7 +180,6 @@ FEMhub.Notebook = Ext.extend(Ext.Window, {
                         case 'yes':
                             manager.saveToBackend();
                         case 'no':
-                            manager.killEngine();
                             FEMhub.Notebook.superclass.close.call(this);
                             break;
                         case 'cancel':
@@ -234,7 +263,7 @@ FEMhub.Notebook = Ext.extend(Ext.Window, {
     renameNotebook: function() {
         Ext.MessageBox.prompt('Rename notebook', 'Enter new notebook name:', function(button, title) {
             if (button === 'ok') {
-                if (FEMhub.isValidName(title) === false) {
+                if (FEMhub.util.isValidName(title) === false) {
                     Ext.MessageBox.show({
                         title: 'Rename notebook',
                         msg: "'" + title + "' is not a valid notebook name.",
@@ -242,12 +271,17 @@ FEMhub.Notebook = Ext.extend(Ext.Window, {
                         icon: Ext.MessageBox.ERROR,
                     });
                 } else {
-                    var guid = this.getCellsManager().nbid;
+                    var guid = this.getGUID();
 
                     FEMhub.RPC.Notebooks.renameNotebook({guid: guid, title: title}, function(result) {
                         if (result.ok === true) {
                             this.setTitle(title);
-                            this.bookshelf.getNotebooks();
+
+                            FEMhub.getDesktop().getManager().each(function(wnd) {
+                                if (wnd.getXType() === 'x-femhub-bookshelf') {
+                                    wnd.getNotebooks();
+                                }
+                            });
                         } else {
                             FEMhub.log("Can't rename notebook");
                         }
@@ -265,7 +299,7 @@ FEMhub.Notebook = Ext.extend(Ext.Window, {
         });
 
         var chooser = new FEMhub.NotebookChooser({
-            guid: this.getCellsManager().nbid,
+            guid: this.getGUID(),
             exclude: true,
             checked: checked,
             listeners: {

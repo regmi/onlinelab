@@ -23,6 +23,14 @@
     background-image: url(/static/img/femhub/icons/64x64/console.png) !important;
 }
 
+.femhub-mesheditor-icon {
+    background-image: url(/static/img/femhub/icons/16x16/mesheditor.png) !important;
+}
+
+.femhub-mesheditor-launcher-icon {
+    background-image: url(/static/img/femhub/icons/64x64/mesheditor.png) !important;
+}
+
 .femhub-help-icon {
     background-image: url(/static/img/femhub/icons/16x16/help.png) !important;
 }
@@ -105,5 +113,13 @@
 
 .femhub-eval-all-notebook-icon {
     background-image: url(/static/img/femhub/icons/lightning.png) !important;
+}
+
+.femhub-increase-font-size-icon {
+    background-image: url(/static/img/femhub/icons/16x16/font-increase.png) !important;
+}
+
+.femhub-decrease-font-size-icon {
+    background-image: url(/static/img/femhub/icons/16x16/font-decrease.png) !important;
 }
 

@@ -58,11 +58,56 @@ FEMhub.Desktop = function(lab) {
     this.createWindow = function(cls, config) {
         config = config || {};
 
+        var view = this.getSize();
+
+        var width = Math.min(0.8*view.width, 700);
+        var height = Math.min(0.8*view.height, 500);
+
+        var x = (view.width - width)/2;
+        var y = (view.height - height)/2;
+
+        var _windows = [];
+
+        this.getManager().each(function(wnd) {
+            _windows.push(wnd);
+        });
+
+        function overlaps(x, y) {
+            for (var i = 0; i < _windows.length; i++) {
+                var wnd = _windows[i];
+
+                if (wnd.hidden) {
+                    continue;
+                }
+
+                if (wnd.x == x && wnd.y == y) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        while (true) {
+            if (overlaps(x, y)) {
+                x += 20;
+                y += 20;
+            } else {
+                break;
+            }
+        }
+
         Ext.applyIf(config, {
             renderTo: desktopEl,
             manager: windows,
             minimizable: true,
-            maximizable: true
+            maximizable: true,
+            closable: true,
+            onEsc: Ext.emptyFn,
+            width: width,
+            height: height,
+            x: x,
+            y: y,
         });
 
         var win = new cls(config);
@@ -73,10 +118,6 @@ FEMhub.Desktop = function(lab) {
         win.resizer.heightIncrement = this.yTickSize;
         win.render(desktopEl);
         win.taskButton = taskbar.addButton(win);
-
-        win.cmenu = new Ext.menu.Menu({
-            items: [],
-        });
 
         win.animateTarget = win.taskButton.el;
 
@@ -205,8 +246,7 @@ FEMhub.Desktop = function(lab) {
 
             menu.showAt(evt.getXY());
             evt.stopEvent();
-        });
-    };
+        }); };
 
     this.arrangeLaunchers = function() {
         var len = this.launchers.length;
@@ -252,6 +292,30 @@ FEMhub.Desktop = function(lab) {
 
     this.getGroup = function() {
         return windows;
+    };
+
+    this.getSize = function() {
+        return desktopEl.getSize();
+    };
+
+    this.getTaskbar = function() {
+        return this.taskbar;
+    };
+
+    this.enable = function() {
+        Ext.each(this.launchers, function(launcher) {
+            launcher.enable();
+        }, this);
+
+        this.taskbar.enable();
+    };
+
+    this.disable = function() {
+        Ext.each(this.launchers, function(launcher) {
+            launcher.disable();
+        }, this);
+
+        this.taskbar.disable();
     };
 };
 
