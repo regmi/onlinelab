@@ -16,15 +16,9 @@ FEMhub.Bookshelf = Ext.extend(Ext.Window, {
         config = config || {};
 
         Ext.apply(config, {
-            title: "FEMhub Bookshelf",
-            layout: 'border',
-            width: 700,
-            height: 500,
+            title: "Bookshelf",
             iconCls: 'femhub-bookshelf-icon',
-            maximizable: true,
-            minimizable: true,
-            closable: true,
-            onEsc: Ext.emptyFn,
+            layout: 'border',
             tbar: this.toolbar,
             items: [this.foldersTree, this.notebooksGrid],
         });
@@ -357,7 +351,7 @@ FEMhub.Bookshelf = Ext.extend(Ext.Window, {
 
         Ext.MessageBox.prompt('Add folder', 'Enter folder name:', function(button, title) {
             if (button === 'ok') {
-                if (FEMhub.isValidName(title) === false) {
+                if (FEMhub.util.isValidName(title) === false) {
                     Ext.MessageBox.show({
                         title: 'Add folder',
                         msg: "Invalid folder name.",
@@ -396,7 +390,7 @@ FEMhub.Bookshelf = Ext.extend(Ext.Window, {
         } else {
             Ext.MessageBox.prompt('Rename folder', 'Enter new folder name:', function(button, title) {
                 if (button === 'ok') {
-                    if (FEMhub.isValidName(title) === false) {
+                    if (FEMhub.util.isValidName(title) === false) {
                         Ext.MessageBox.show({
                             title: 'Rename folder',
                             msg: "Invalid folder name.",
@@ -452,7 +446,7 @@ FEMhub.Bookshelf = Ext.extend(Ext.Window, {
     renameNotebook: function(record) {
         Ext.MessageBox.prompt('Rename notebook', 'Enter new notebook name:', function(button, title) {
             if (button === 'ok') {
-                if (FEMhub.isValidName(title) === false) {
+                if (FEMhub.util.isValidName(title) === false) {
                     Ext.MessageBox.show({
                         title: 'Rename notebook',
                         msg: "'" + title + "' is not a valid notebook name.",
@@ -557,20 +551,16 @@ FEMhub.Bookshelf = Ext.extend(Ext.Window, {
         var desktop = FEMhub.lab.getDesktop();
 
         var notebooks = desktop.getGroup().getBy(function(wnd) {
-            return Ext.isDefined(wnd.nbid) && wnd.nbid == guid;
+            return Ext.isDefined(wnd.guid) && wnd.guid == guid;
         }, this);
 
         if (notebooks.length) {
             var notebook = notebooks[0];
         } else {
             var notebook = desktop.createWindow(FEMhub.Notebook, {
-                nbid: guid,
-                name: name || 'untitled',
-                width: 600,
-                height: 400,
-                bookshelf: this,
+                guid: guid,
+                name: name,
             });
-
         }
 
         notebook.show();
@@ -597,6 +587,8 @@ FEMhub.Bookshelf = Ext.extend(Ext.Window, {
             }, this, true);
     },
 });
+
+Ext.reg('x-femhub-bookshelf', FEMhub.Bookshelf);
 
 FEMhub.Modules.Bookshelf = Ext.extend(FEMhub.Module, {
     launcher: {

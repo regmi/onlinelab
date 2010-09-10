@@ -58,11 +58,22 @@ FEMhub.Desktop = function(lab) {
     this.createWindow = function(cls, config) {
         config = config || {};
 
+        var view = this.getSize();
+
+        var width = Math.min(0.8*view.width, 700);
+        var height = Math.min(0.8*view.height, 500);
+
         Ext.applyIf(config, {
             renderTo: desktopEl,
             manager: windows,
             minimizable: true,
-            maximizable: true
+            maximizable: true,
+            closable: true,
+            onEsc: Ext.emptyFn,
+            x: (view.width - width)/2,
+            y: (view.height - height)/2,
+            width: width,
+            height: height,
         });
 
         var win = new cls(config);
@@ -73,10 +84,6 @@ FEMhub.Desktop = function(lab) {
         win.resizer.heightIncrement = this.yTickSize;
         win.render(desktopEl);
         win.taskButton = taskbar.addButton(win);
-
-        win.cmenu = new Ext.menu.Menu({
-            items: [],
-        });
 
         win.animateTarget = win.taskButton.el;
 
@@ -205,8 +212,7 @@ FEMhub.Desktop = function(lab) {
 
             menu.showAt(evt.getXY());
             evt.stopEvent();
-        });
-    };
+        }); };
 
     this.arrangeLaunchers = function() {
         var len = this.launchers.length;
@@ -252,6 +258,30 @@ FEMhub.Desktop = function(lab) {
 
     this.getGroup = function() {
         return windows;
+    };
+
+    this.getSize = function() {
+        return desktopEl.getSize();
+    };
+
+    this.getTaskbar = function() {
+        return this.taskbar;
+    };
+
+    this.enable = function() {
+        Ext.each(this.launchers, function(launcher) {
+            launcher.enable();
+        }, this);
+
+        this.taskbar.enable();
+    };
+
+    this.disable = function() {
+        Ext.each(this.launchers, function(launcher) {
+            launcher.disable();
+        }, this);
+
+        this.taskbar.disable();
     };
 };
 

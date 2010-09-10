@@ -3,13 +3,10 @@
 if [ -e "defs" ]; then
     source defs
 else
-    #source bin/defs
-    source $SAGE_LOCAL/lib/python/site-packages/onlinelab/bin/defs
+    source bin/defs
 fi
 
-#cd $ROOT
-cd $SAGE_LOCAL/lib/python2.6/site-packages/onlinelab/root
+cd $ROOT
 
-#PYTHONPATH=$PYTHONPATH $PYTHONPATH/bin/codenode-admin frontend $*
-PYTHONPATH=$SAGE_LOCAL/lib/python2.6/site-packages/onlinelab/base/codenode-unr
-$PYTHONPATH/bin/codenode-admin frontend $*
+PYTHONPATH=$PYTHONPATH $PYTHONPATH/bin/codenode-admin frontend $*
+
